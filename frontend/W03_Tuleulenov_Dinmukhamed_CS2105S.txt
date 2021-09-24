@@ -1,0 +1,262 @@
+301
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    double x, y, z;
+    cin >> x >> y >> z;
+    
+    if (x < y && y < z) {
+        cout << "YES" << endl;
+    } else {
+        cout << "NO" << endl;
+    }
+    return 0;
+}
+
+302 
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+int main()
+{
+    double x, y, z;
+    cin >> x >> y >> z;
+    
+    if (x <= y && y <= z) {
+        cout << x * 2 << endl;
+        cout << y * 2 << endl;
+        cout << z * 2 << endl;
+
+    } else {
+        cout << abs(x) << " " << abs(y) << " " << abs(z) << endl;
+    }
+}
+
+303
+#include <iostream> 
+#include <cmath>  
+  
+using namespace std; 
+  
+int main() 
+{    
+    // Declare vars
+    double a, b, c, x1, x2, discr; 
+    cin >> a >> b >> c;
+    
+    // Calculate discr
+    discr = ( b * b ) - (4 * a * c); 
+    
+    // Calculate roots
+    if (discr == 0) {
+        cout << 0;
+    } else if (discr < 0) { 
+        cout << "no solution\n"; 
+    } else { 
+        x1 = ((-b) + sqrt(discr)) / (2 * a);  
+        x2 = ((-b) - sqrt(discr)) / (2 * a);  
+        cout << x1 << " " << x2; 
+    };  
+    return 0; 
+}
+
+304
+#include <iostream>
+#include <cmath>
+ 
+using namespace std;
+
+int main() {
+    double maxs, mins, x, y, z;
+    int i, n;
+    cin >> x >> y >> z;
+    double arr [3] = {x, y, z};
+    
+    maxs = arr[0];
+    mins = arr[0];
+    
+    for (i = 0; i < 3; i++) {
+        if (mins > arr[i]) {
+            mins = arr[i];
+        }
+        if (maxs < arr[i]) {
+            maxs = arr[i];
+        }
+    }
+    
+    cout << mins << " " << maxs << endl;
+}
+
+305 
+#include <iostream>
+#include <cmath>
+ 
+using namespace std;
+
+int main() {
+    double a, b, c;
+    cin >> a >> b >> c;
+    string is_possible = "NO";
+    
+    if (a + b > c && a + c > b && b + c > a) {
+        is_possible = "YES";
+    }
+    cout << is_possible;
+}
+
+306
+#include <iostream>
+#include <cmath>
+ 
+ 
+using namespace std;
+
+int main() {
+    int year;
+    cin >> year;
+    
+    if (year % 4 == 0 && ((year % 100) != 0 || (year % 400) == 0)) {
+        cout << 366;
+        return 0;
+    }
+    cout << 365;
+    return 0;
+}
+
+307
+#include <iostream> 
+
+using namespace std; 
+
+  
+int main() 
+{    
+    string cdn;
+    int y, d, m, yd, dc;
+
+    cin >> d >> m >> y;  
+    dc = 30;
+    
+    // declare days in this year
+    if ((y % 4 == 0 && y % 100 != 0) || (y % 400 == 0)) {
+        yd = 366;
+    } else {
+        yd = 365;
+    }
+    
+    // declare how many days in the month
+    if (yd == 365 && m == 2) {
+        dc = 28; 
+    } else if (yd == 366 && m == 2) {
+        dc = 29;
+    } else if (
+        m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12
+    ) {
+        dc = 31; 
+    }
+    
+    if (d <= dc && m <= 12) {
+        cout << "yes";
+        return 0;
+    } else {
+        cout << "no";
+        return 0;
+    }
+}
+
+
+308
+#include <stdio.h>
+#include <iostream>
+
+using namespace std;
+ 
+int main()
+{
+    // Declare the vars
+    int year, p1, p2, p3, p4, p5, date;
+    cin >> year;
+    
+    // Calculate by formula
+    p1 = year / 400 - 1994 / 400;
+    p2 = year / 100 - 1994 / 100;
+    p3 = year / 4 - 1994 / 4;
+    date = (year - 1994) * 365 + p3 - p2 + p1;
+    p4 = date % 7;
+    
+    // If conditions
+    if (p4 >= 2)
+        p5 = 9 - p4;
+    else 
+        p5 = 2 - p4;
+        
+    cout << p5;
+    return 0;
+}
+
+309 
+#include <stdio.h>
+#include <iostream>
+#define isleap(y) (((y) % 4) == 0 && (((y) % 100) != 0 || ((y) % 400) == 0))
+
+using namespace std;
+ 
+int main()
+{
+    int d, m, y, rd, rm, ry;
+    bool isd31 = false;
+    cin >> d >> m >> y;
+    rd = d;
+    rm = m;
+    ry = y;
+    int m_31_d [7] = {1, 3, 5, 7, 8, 10, 12};
+    
+    for (int i = 0; i < 7; i++) {
+        if (m == m_31_d[i]) {
+            isd31 = true;
+        }
+    }
+    
+    if (m == 2 && d > 28) {
+        if (!isleap(y)) {
+            return 0;
+        }
+        if (isleap(y) && y > 29) {
+            return 0;
+        }
+    }
+    
+    if (isleap(y) && m == 2 && d == 29) {
+        rd = 1;
+        rm++;
+    } 
+    else if (!isleap(y) && m == 2 && d == 28) {
+        rd = 1;
+        rm++;
+    }
+    else if (isd31 && d == 31) {
+        rd = 1;
+        rm++;
+    }
+    else if (!isd31 && d == 30) {
+        rd = 1;
+        rm++;
+    }
+    else if (!isd31 && d > 30) {
+        return 0;
+    }
+    else {
+        rd++;
+    }
+    if (m == 12 && (rm - m) == 1) {
+        ++ry;
+        rm = 1;
+        rd = 1;
+    }
+    cout << rd << " " << rm << " " << ry;
+}
