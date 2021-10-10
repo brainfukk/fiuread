@@ -24,6 +24,9 @@ class UserPurse(CommonModel):
     )
     points = models.IntegerField(default=0, verbose_name=_("Счет пользователя"))
 
+    def __str__(self):
+        return self.points
+
 
 class Event(CommonModel):
     class Meta:
@@ -43,6 +46,9 @@ class Event(CommonModel):
         max_length=255,
         verbose_name=_("Текст ивента"),
     )
+
+    def __str__(self):
+        return self.message
 
 
 class UserUnitRelation(CommonModel):

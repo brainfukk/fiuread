@@ -28,6 +28,12 @@ class FIUReadUserManager(UserManager):
             message="Вы зарегистрировали аккаунт! {}".format(user.date_joined)
         )
 
+    def confirm_email(self, username):
+        user = self.get_by_natural_key(username)
+        user.is_email_confirmed = True
+        user.save()
+        return user
+
     def create_user(self, username, email=None, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_superuser", False)

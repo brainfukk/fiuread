@@ -53,3 +53,10 @@ def check_user_confirmation_status(username: str, email: str):
     key = construct_email_token_register_key(username=username, user_email=email)
     data = connection.hgetall(key)
     return __cast_bool(data["status"])
+
+
+def destroy_user_token(key: str) -> None:
+    connection = get_connection()
+    connection.hdel(key, 1)
+    connection.hdel(key, 2)
+    connection.hdel(key, 3)

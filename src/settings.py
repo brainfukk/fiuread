@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from datetime import timedelta
 
 from decouple import config
 
@@ -27,7 +28,7 @@ SECRET_KEY = "8(o-li)be(v(t*%v=$llnz*h)4h@d63t@o6@^g8638u3+bun)t"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['10.200.9.87', '192.168.1.76', 'localhost']
 
 
 # Application definition
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "corsheaders",
+    "jsonschemaform",
     # apps
     "src.apps.authentication",
     "src.apps.user",
@@ -100,6 +102,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1)
 }
 
 AUTH_USER_MODEL = "authentication.FIUReadUser"

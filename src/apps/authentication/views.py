@@ -5,9 +5,9 @@ from rest_framework.response import Response
 from src.apps.utils.redis_tools import (
     check_user_confirmation_status,
     check_user_token,
-    confirm_user_token,
     construct_email_token_register_key,
     set_email_token_confirmation,
+    destroy_user_token
 )
 from src.apps.utils.viewsets import ModelViewSetMixin
 
@@ -57,6 +57,19 @@ class RegistrationViewSet(ModelViewSetMixin):
     def step_1(self, request, *args, **kwargs):
         username = request.data.get("username")
         user_email = request.data.get("email")
+        password = request.data.get("password")
+
+        try:
+            FIUReadUser.objects.create_user(
+                username=username,
+                email=user_email,
+                password=password
+            )
+        except Exception:
+            raise APIException(
+                'User with same username already exists',
+                code='400;%s' % "USER_ALREADY_EXISTS"
+            )
 
         confirmation_code = construct_email_token_register_key(
             username=username, user_email=user_email
@@ -106,7 +119,8 @@ class EmailConfirmationView(ModelViewSetMixin):
                 code="400;%s" % "CONFIRMATION_CODE_VALIDATION_ERROR",
             )
 
-        confirm_user_token(key=confirmation_code)
+        FIUReadUser.objects.confirm_email(username=username)
+        destroy_user_token(key=confirmation_code)
         return Response({"msg": True}, status=200)
 
     def confirm_post(self, request, *args, **kwargs):

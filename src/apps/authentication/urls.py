@@ -17,12 +17,8 @@ urlpatterns = [
     ),
     path(
         "register/step-2/",
-        RegistrationViewSet.as_view({"post": "step_2"}),
-        name="register-2",
-    ),
-    path(
-        "register/email-confirmation/",
         EmailConfirmationView.as_view({"post": "confirm_post"}),
+        name="register-2",
     ),
     path("register/pipeline/", RegistrationPipelineViewSet.as_view({"get": "handle"})),
 ]

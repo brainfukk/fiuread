@@ -1,13 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import styled from 'styled-components/native';
 
-import PlainTextView from './components/PlainTextView.jsx';
+import { StartScreen } from './components/Auth/Start.jsx';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <PlainTextView></PlainTextView>
+      <StartScreen />
     </View>
   );
 }
