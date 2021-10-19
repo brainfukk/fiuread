@@ -175,3 +175,5 @@ MAIL_CONFIRM_FRONT_LINK = config("MAIL_CONFIRM_FRONT_LINK", cast=str)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
+MEDIA_ROOT = "/Users/dimash/Desktop/gits/brainfukk/fiuread/files/"
+MEDIA_URL = "/api/v1/media/"

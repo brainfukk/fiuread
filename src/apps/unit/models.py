@@ -1,5 +1,8 @@
+from typing import Optional
+
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
+from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
 from src.apps.utils.models import CommonModel
@@ -15,28 +18,23 @@ class UnitManager(models.Manager):
         ]
         return UserUnitRelation.objects.bulk_create(data)
 
-    def create_unit(self, topic, name, users):
-        unit = Unit.objects.create(topic=topic, name=name)
-        self.create_users_unit_relation(unit=unit, users=users)
+    def create_unit(self, topic, name, desc):
+        unit = Unit.objects.create(topic=topic, name=name, description=desc)
+        self.create_users_unit_relation(unit=unit, users=get_user_model().objects.all())
         return unit
 
 
 class UnitTheoryElementType(models.TextChoices):
     LIST_VIEW = "LIST_VIEW", "Список"
-
     PLAIN_TEXT_VIEW = "PLAIN_TEXT_VIEW", "Текст"
-
     IMAGE_VIEW = "IMAGE_VIEW", "Изображение"
-    IMAGE_BETWEEN_TEXT = "IMAGE_BETWEEN_TEXT", "Изображение, между текстами"
-    IMAGE_LEFT_TEXT_VIEW = "IMAGE_LEFT_TEXT_VIEW", "Изображение, текст слева"
-    IMAGE_RIGHT_TEXT_VIEW = "IMAGE_RIGHT_TEXT_VIEW", "Изображение, текст справа"
+    HEADING = "HEADING", "Заголовок"
 
 
 class UnitExerciseElementType(models.TextChoices):
-    FREE_ANSWER = "FREE_ANSWER", "СВОБОДНЫЙ ТИП ОТВЕТОВ"
-    IN_TEXT = "IN_TEXT", "ВСТАВКА ОТВЕТОВ В ТЕКСТ"
-    ANSWER_CHOICE = "ANSWER_CHOICE", "ВЫБРАТЬ ПРАВИЛЬНЫЙ ОТВЕТ"
-    SCROLL_CHOICE = "SCROLL_CHOICE", "СКРОЛЛ ВВЕРХ-ВНИЗ"
+    ANSWER_CHOICE = "ANSWER_CHOICE", "Выбрать правильный ответ"
+    IN_TEXT_SELECT = "IN_TEXT_SELECT", "Выбор правильного ответа в тексте"
+    FREE_IN_TEXT_ANSWER = "FREE_IN_TEXT_ANSWER", "Вписать правильный ответ в тексте"
 
 
 class Topic(CommonModel):
@@ -48,6 +46,27 @@ class Topic(CommonModel):
         max_length=255,
         verbose_name=_("Название топика"),
     )
+    description = models.CharField(
+        max_length=40,
+        verbose_name=_("Описание раздела"),
+        default="",
+        blank=True
+    )
+
+    def get_progress(self, user_id: int) -> Optional[int]:
+        progress = 0
+        unit_user_relations_progress = self.units.filter(   # noqa
+            related_users__user__id=user_id
+        ).values_list("related_users__progress", flat=True)
+
+        if not unit_user_relations_progress:
+            return 0
+
+        one_unit_weight = 100 // unit_user_relations_progress.count()
+        for unit_user_relation_progress in unit_user_relations_progress:
+            unit_weight = (one_unit_weight * unit_user_relation_progress) // 100
+            progress += unit_weight
+        return progress
 
     def __str__(self):
         return self.name
@@ -68,6 +87,11 @@ class Unit(CommonModel):
         max_length=255,
         verbose_name=_("Название юнита"),
         default="Безымянный раздел"
+    )
+    description = models.CharField(
+        max_length=100,
+        verbose_name=_("Описание юнита"),
+        default="Нет описания..."
     )
 
     objects = UnitManager()
@@ -95,7 +119,15 @@ class UnitTheoryElement(CommonModel):
     content = models.CharField(
         max_length=600,
         verbose_name=_("Контетнт элемента"),
+        null=True,
+        blank=True
     )
+    image = models.ImageField(
+        upload_to="unitassets",
+        null=True,
+        blank=True
+    )
+    order_number = models.IntegerField(default=0)
 
 
 class UnitExerciseElement(CommonModel):
@@ -117,7 +149,15 @@ class UnitExerciseElement(CommonModel):
     content = models.CharField(
         max_length=500,
         verbose_name=_("Контент элемента"),
+        null=True,
+        blank=True
     )
+    image = models.ImageField(
+        upload_to="unitassets",
+        null=True,
+        blank=True
+    )
+    order_number = models.IntegerField(default=0)
 
     def __str__(self):
         return self.content
@@ -125,7 +165,7 @@ class UnitExerciseElement(CommonModel):
 
 class UnitExerciseElementAnswer(CommonModel):
     class Meta:
-        verbose_name = _("Варианты ответов для упражнения юнита")
+        verbose_name = _("Вариант ответа упражнения юнита")
         verbose_name_plural = _("Варианты ответов для упражнения юнитов")
 
     exercise = models.ForeignKey(
@@ -149,3 +189,35 @@ class UnitExerciseElementAnswer(CommonModel):
 
     def __str__(self):
         return "{} Ответы".format(str(self.exercise))
+
+
+class UnitUserAnswer(CommonModel):
+    class Meta:
+        verbose_name = _("Ответ юзера на вопрос")
+        verbose_name_plural = _("Ответы юзеров на вопросы")
+
+    user = models.ForeignKey(
+        to='authentication.FIUReadUser',
+        on_delete=models.CASCADE,
+        related_name="user_answers",
+        verbose_name=_("Пользователь")
+    )
+    unit = models.ForeignKey(
+        to=Unit,
+        on_delete=models.CASCADE,
+        verbose_name=_("Юнит")
+    )
+    exercise = models.ForeignKey(
+        to=UnitExerciseElement,
+        on_delete=models.CASCADE,
+        related_name="user_answer",
+        verbose_name=_("Упражнение")
+    )
+    answer = models.ForeignKey(
+        to=UnitExerciseElementAnswer,
+        on_delete=models.CASCADE,
+        verbose_name=_("Ответ пользователя")
+    )
+
+    def __str__(self):
+        return "<{}> {}".format(self.unit, self.exercise, self.answer)
