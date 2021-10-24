@@ -23,6 +23,7 @@ urlpatterns = (
     path("units/exercise/answer/",
          UnitUserAnswerViewSet.as_view({
              "get": "list",
+             "post": "create"
          }),
          name="unit-exercise-answers"),
 )

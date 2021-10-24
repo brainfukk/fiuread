@@ -9,6 +9,7 @@ from .models import (
     UnitUserAnswer,
     UnitExerciseElementAnswer
 )
+from .utils import AnswersMixin
 
 
 class TopicSerializer(serializers.ModelSerializer):
@@ -77,11 +78,12 @@ class UnitExerciseElementSerializer(serializers.ModelSerializer):
 
 
 class UnitUserAnswerSerializer(serializers.ModelSerializer):
-    unit = UnitSerializer()
-    user = FIUReadGetUserSerializer()
-    exercise = UnitExerciseElementSerializer()
     answer = UnitExerciseElementAnswerSerializer()
+    exercise_type = serializers.SerializerMethodField()
 
     class Meta:
         model = UnitUserAnswer
-        fields = ("id", "user", "unit", "exercise", "answer")
+        fields = ("id", "exercise", "exercise_type", "answer")
+
+    def get_exercise_type(self, obj):
+        return obj.exercise.type
