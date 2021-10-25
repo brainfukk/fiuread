@@ -9,6 +9,11 @@ from src.apps.user.models import UserUnitRelation
 from src.apps.utils.models import CommonModel
 
 
+class UserPlan(models.TextChoices):
+    FREE = "FREE_PLAN", "Бесплатная подписка"
+    PREMIUM = "PREMIUM_PLAN", "Премиальная подписка"
+
+
 class UnitManager(models.Manager):
     def create_users_unit_relation(self, unit, users):
         data = [UserUnitRelation(user=user, unit=unit) for user in users]
@@ -81,6 +86,11 @@ class Unit(CommonModel):
     )
     description = models.CharField(
         max_length=100, verbose_name=_("Описание юнита"), default="Нет описания..."
+    )
+    access_plan = models.CharField(
+        max_length=30,
+        choices=UserPlan.choices,
+        verbose_name=_("Уровень подписки для просмотра юнита"),
     )
 
     objects = UnitManager()

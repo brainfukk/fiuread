@@ -13,5 +13,6 @@ urlpatterns = [
     path("purchases/", UserPurchasesViewSet.as_view({"get": "list", "post": "create"})),
     path("purse/", UserPurseViewSet.as_view({"get": "list"})),
     path("events/", EventViewSet.as_view({"get": "list"})),
+    path("events/<int:pk>/", EventViewSet.as_view({"put": "partial_update"})),
     path("user_unit_relates/", UserUnitRelationViewSet.as_view({"get": "list"})),
 ]

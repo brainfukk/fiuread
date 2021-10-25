@@ -10,7 +10,7 @@ class FIUReadGetUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FIUReadUser
-        fields = ("id", "username", "email", "date_joined", "avatar", "points")
+        fields = ("id", "username", "email", "date_joined", "avatar", "points", "plan")
 
     def get_points(self, obj):
         return obj.purse.last().points

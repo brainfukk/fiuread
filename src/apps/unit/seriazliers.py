@@ -33,7 +33,7 @@ class UnitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Unit
-        fields = ("id", "topic", "name", "progress", "short_content")
+        fields = ("id", "topic", "name", "progress", "short_content", "access_plan")
 
     def get_short_content(self, obj):
         return obj.description
