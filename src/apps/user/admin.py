@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from .models import Event, UserPurse, UserUnitRelation
+from .models import Event, UserPurchases, UserPurse, UserUnitRelation
+
+
+@admin.register(UserPurchases)
+class UserPurchasesAdmin(admin.ModelAdmin):
+    search_fields = ("user__id", "user__username", "product__name", "product__cost")
+    list_display = ("user", "product")
+    raw_id_fields = ("user", "product")
 
 
 @admin.register(Event)

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('unit', '0009_alter_unittheoryelement_content'),
+        ("unit", "0009_alter_unittheoryelement_content"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='unittheoryelement',
-            name='order_number',
+            model_name="unittheoryelement",
+            name="order_number",
             field=models.IntegerField(default=0),
         ),
     ]

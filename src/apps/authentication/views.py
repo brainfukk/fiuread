@@ -6,8 +6,8 @@ from src.apps.utils.redis_tools import (
     check_user_confirmation_status,
     check_user_token,
     construct_email_token_register_key,
+    destroy_user_token,
     set_email_token_confirmation,
-    destroy_user_token
 )
 from src.apps.utils.viewsets import ModelViewSetMixin
 
@@ -61,14 +61,12 @@ class RegistrationViewSet(ModelViewSetMixin):
 
         try:
             FIUReadUser.objects.create_user(
-                username=username,
-                email=user_email,
-                password=password
+                username=username, email=user_email, password=password
             )
         except Exception:
             raise APIException(
-                'User with same username already exists',
-                code='400;%s' % "USER_ALREADY_EXISTS"
+                "User with same username already exists",
+                code="400;%s" % "USER_ALREADY_EXISTS",
             )
 
         confirmation_code = construct_email_token_register_key(

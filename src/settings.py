@@ -28,7 +28,7 @@ SECRET_KEY = "8(o-li)be(v(t*%v=$llnz*h)4h@d63t@o6@^g8638u3+bun)t"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.200.9.87', '192.168.1.76', 'localhost']
+ALLOWED_HOSTS = ["10.200.9.87", "192.168.1.76", "localhost"]
 
 
 # Application definition
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "src.apps.authentication",
     "src.apps.user",
     "src.apps.unit",
+    "src.apps.shop",
 ]
 
 MIDDLEWARE = [
@@ -87,14 +88,14 @@ WSGI_APPLICATION = "src.wsgi.application"
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': config('DATABASE_ENGINE', cast=str),
-        'NAME': config('DATABASE_NAME', cast=str),
-        'USER': config('DATABASE_USER', cast=str),
-        'PASSWORD': config('DATABASE_PASSWORD', cast=str),
-        'HOST': config('DATABASE_HOST', cast=str),
-        'PORT': config('DATABASE_PORT', cast=str),
-        'CONN_MAX_AGE': 60
+    "default": {
+        "ENGINE": config("DATABASE_ENGINE", cast=str),
+        "NAME": config("DATABASE_NAME", cast=str),
+        "USER": config("DATABASE_USER", cast=str),
+        "PASSWORD": config("DATABASE_PASSWORD", cast=str),
+        "HOST": config("DATABASE_HOST", cast=str),
+        "PORT": config("DATABASE_PORT", cast=str),
+        "CONN_MAX_AGE": 60,
     }
 }
 
@@ -102,7 +103,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1)
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
 }
 
 AUTH_USER_MODEL = "authentication.FIUReadUser"

@@ -7,13 +7,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('unit', '0004_auto_20210929_0855'),
+        ("unit", "0004_auto_20210929_0855"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='unitexerciseelementanswer',
-            name='data',
-            field=models.JSONField(default={'answers': {0: 1}, 'variants': ['d', 'a', 't', 'a']}, encoder=django.core.serializers.json.DjangoJSONEncoder, verbose_name='Варинаты ответов или правильные ответы(зависит от типа упражнения)'),
+            model_name="unitexerciseelementanswer",
+            name="data",
+            field=models.JSONField(
+                default={"answers": {0: 1}, "variants": ["d", "a", "t", "a"]},
+                encoder=django.core.serializers.json.DjangoJSONEncoder,
+                verbose_name="Варинаты ответов или правильные ответы(зависит от типа упражнения)",
+            ),
         ),
     ]

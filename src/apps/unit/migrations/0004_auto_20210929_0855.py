@@ -7,23 +7,36 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('unit', '0003_alter_unitexerciseelement_content'),
+        ("unit", "0003_alter_unitexerciseelement_content"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='unitexerciseelement',
-            name='type',
-            field=models.CharField(choices=[('FREE_ANSWER', 'СВОБОДНЫЙ ТИП ОТВЕТОВ'), ('IN_TEXT', 'ВСТАВКА ОТВЕТОВ В ТЕКСТ'), ('ANSWER_CHOICE', 'ВЫБРАТЬ ПРАВИЛЬНЫЙ ОТВЕТ'), ('SCROLL_CHOICE', 'СКРОЛЛ ВВЕРХ-ВНИЗ')], max_length=60, verbose_name='Тип элемента'),
+            model_name="unitexerciseelement",
+            name="type",
+            field=models.CharField(
+                choices=[
+                    ("FREE_ANSWER", "СВОБОДНЫЙ ТИП ОТВЕТОВ"),
+                    ("IN_TEXT", "ВСТАВКА ОТВЕТОВ В ТЕКСТ"),
+                    ("ANSWER_CHOICE", "ВЫБРАТЬ ПРАВИЛЬНЫЙ ОТВЕТ"),
+                    ("SCROLL_CHOICE", "СКРОЛЛ ВВЕРХ-ВНИЗ"),
+                ],
+                max_length=60,
+                verbose_name="Тип элемента",
+            ),
         ),
         migrations.AlterField(
-            model_name='unitexerciseelementanswer',
-            name='data',
-            field=models.JSONField(default={'answers': {0: 1}, 'variants': ['data']}, encoder=django.core.serializers.json.DjangoJSONEncoder, verbose_name='Варинаты ответов или правильные ответы(зависит от типа упражнения)'),
+            model_name="unitexerciseelementanswer",
+            name="data",
+            field=models.JSONField(
+                default={"answers": {0: 1}, "variants": ["data"]},
+                encoder=django.core.serializers.json.DjangoJSONEncoder,
+                verbose_name="Варинаты ответов или правильные ответы(зависит от типа упражнения)",
+            ),
         ),
         migrations.AlterField(
-            model_name='unittheoryelement',
-            name='content',
-            field=models.CharField(max_length=600, verbose_name='Контетнт элемента'),
+            model_name="unittheoryelement",
+            name="content",
+            field=models.CharField(max_length=600, verbose_name="Контетнт элемента"),
         ),
     ]

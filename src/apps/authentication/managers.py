@@ -1,14 +1,12 @@
 from django.contrib.auth.models import UserManager
 
-from src.apps.user.models import UserPurse, UserUnitRelation, Event, EventItemType
 from src.apps.unit.models import Unit
+from src.apps.user.models import Event, EventItemType, UserPurse, UserUnitRelation
 
 
 class FIUReadUserManager(UserManager):
     def create_user_purse(self, user):
-        return UserPurse.objects.get_or_create(user=user, defaults={
-            "user": user
-        })
+        return UserPurse.objects.get_or_create(user=user, defaults={"user": user})
 
     def create_user_unit_relations(self, user):
         units = Unit.objects.all()
@@ -25,7 +23,7 @@ class FIUReadUserManager(UserManager):
         return Event.objects.create(
             user=user,
             type=EventItemType.NOTIFICATION,
-            message="Вы зарегистрировали аккаунт! {}".format(user.date_joined)
+            message="Вы зарегистрировали аккаунт! {}".format(user.date_joined),
         )
 
     def confirm_email(self, username):

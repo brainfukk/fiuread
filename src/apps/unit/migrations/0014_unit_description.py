@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('unit', '0013_auto_20211017_0453'),
+        ("unit", "0013_auto_20211017_0453"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='unit',
-            name='description',
-            field=models.CharField(default='Нет описания...', max_length=100, verbose_name='Описание юнита'),
+            model_name="unit",
+            name="description",
+            field=models.CharField(
+                default="Нет описания...", max_length=100, verbose_name="Описание юнита"
+            ),
         ),
     ]

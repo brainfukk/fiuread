@@ -1,22 +1,23 @@
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from src.apps.utils.viewsets import ModelViewSetMixin
+
 from .models import (
     Topic,
     Unit,
-    UnitTheoryElement,
     UnitExerciseElement,
+    UnitExerciseElementAnswer,
+    UnitTheoryElement,
     UnitUserAnswer,
-    UnitExerciseElementAnswer
 )
 from .seriazliers import (
     TopicSerializer,
+    UnitExerciseElementAnswerSerializer,
+    UnitExerciseElementSerializer,
     UnitSerializer,
     UnitTheoryElementSerializer,
-    UnitExerciseElementSerializer,
-    UnitExerciseElementAnswerSerializer,
-    UnitUserAnswerSerializer
+    UnitUserAnswerSerializer,
 )
 from .utils import AnswersMixin
 
@@ -32,8 +33,10 @@ class UnitViewSet(ModelViewSetMixin):
     serializer_class = UnitSerializer
 
     def get_queryset(self):
-        return super().get_queryset().filter(
-            topic__id=self.request.query_params.get("topic_id")
+        return (
+            super()
+            .get_queryset()
+            .filter(topic__id=self.request.query_params.get("topic_id"))
         )
 
 
@@ -43,9 +46,12 @@ class UnitTheoryElementViewSet(ModelViewSetMixin):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return super().get_queryset().filter(
-            unit__id=self.request.query_params.get("unit_id")
-        ).order_by('order_number')
+        return (
+            super()
+            .get_queryset()
+            .filter(unit__id=self.request.query_params.get("unit_id"))
+            .order_by("order_number")
+        )
 
 
 class UnitExercisesElementViewSet(ModelViewSetMixin):
@@ -54,9 +60,12 @@ class UnitExercisesElementViewSet(ModelViewSetMixin):
     permission_classes = (AllowAny,)
 
     def get_queryset(self):
-        return super().get_queryset().filter(
-            unit__id=self.request.query_params.get("unit_id")
-        ).order_by("order_number")
+        return (
+            super()
+            .get_queryset()
+            .filter(unit__id=self.request.query_params.get("unit_id"))
+            .order_by("order_number")
+        )
 
 
 class UnitExercisesAnswersViewSet(ModelViewSetMixin):
@@ -71,14 +80,18 @@ class UnitUserAnswerViewSet(ModelViewSetMixin):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return super().get_queryset().filter(
-            user__id=self.request.user.id,
-            unit__id=self.request.query_params.get("unit_id")
+        return (
+            super()
+            .get_queryset()
+            .filter(
+                user__id=self.request.user.id,
+                unit__id=self.request.query_params.get("unit_id"),
+            )
         )
 
     def get_answer_var(self, exercise_id: int):
         exercise = UnitExerciseElementAnswer.objects.filter(exercise__id=exercise_id)
-        if len(exercise) == 1 and exercise[0].type == 'IN_TEXT_SELECT':
+        if len(exercise) == 1 and exercise[0].type == "IN_TEXT_SELECT":
             return exercise[0]
         return
 
@@ -86,8 +99,8 @@ class UnitUserAnswerViewSet(ModelViewSetMixin):
         return UnitExerciseElement.objects.get(id=exercise_id)
 
     def create(self, request, *args, **kwargs):
-        unit_id = request.data.get('unit_id')
-        answers = request.data.get('answers')
+        unit_id = request.data.get("unit_id")
+        answers = request.data.get("answers")
 
         items = []
         unit_obj = Unit.objects.get(id=unit_id)
@@ -97,7 +110,7 @@ class UnitUserAnswerViewSet(ModelViewSetMixin):
 
             if exercise.type == "IN_TEXT_SELECT":
                 db_answer = exercise.answers.last()
-                db_answer.data['user'] = value
+                db_answer.data["user"] = value
                 db_answer.save()
             else:
                 db_answer = exercise.answers.filter(id=value).last()
@@ -115,7 +128,7 @@ class UnitUserAnswerViewSet(ModelViewSetMixin):
                     user_id=request.user.id,
                     unit_id=unit_id,
                     exercise_id=int(key),
-                    answer=db_answer
+                    answer=db_answer,
                 )
             items.append(unit)
 

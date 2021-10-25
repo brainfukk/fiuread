@@ -25,7 +25,29 @@ class UserPurse(CommonModel):
     points = models.IntegerField(default=0, verbose_name=_("Счет пользователя"))
 
     def __str__(self):
-        return self.points
+        return "{} {}".format(self.user, str(self.points))
+
+
+class UserPurchases(CommonModel):
+    class Meta:
+        verbose_name = _("Преобретение пользователя")
+        verbose_name_plural = _("Преобретения пользователя")
+
+    user = models.ForeignKey(
+        to="authentication.FIUReadUser",
+        on_delete=models.CASCADE,
+        verbose_name=_("Пользователь"),
+        related_name="purchases",
+    )
+    product = models.ForeignKey(
+        to="shop.ShopItem",
+        on_delete=models.DO_NOTHING,
+        verbose_name=_("Продукт"),
+    )
+    is_active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "{} - {}".format(self.user.username, self.product.name)  # noqa
 
 
 class Event(CommonModel):
@@ -46,6 +68,7 @@ class Event(CommonModel):
         max_length=255,
         verbose_name=_("Текст ивента"),
     )
+    is_hidden = models.BooleanField(default=False)
 
     def __str__(self):
         return self.message
@@ -69,6 +92,5 @@ class UserUnitRelation(CommonModel):
         related_name="related_users",
     )
     progress = models.IntegerField(
-        default=0,
-        verbose_name=_("Прогресс прохождения юнита")
+        default=0, verbose_name=_("Прогресс прохождения юнита")
     )

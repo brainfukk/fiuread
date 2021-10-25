@@ -1,15 +1,13 @@
 from rest_framework import serializers
 
-from src.apps.authentication.serializers import FIUReadGetUserSerializer
 from .models import (
     Topic,
     Unit,
-    UnitTheoryElement,
     UnitExerciseElement,
+    UnitExerciseElementAnswer,
+    UnitTheoryElement,
     UnitUserAnswer,
-    UnitExerciseElementAnswer
 )
-from .utils import AnswersMixin
 
 
 class TopicSerializer(serializers.ModelSerializer):
@@ -72,9 +70,7 @@ class UnitExerciseElementSerializer(serializers.ModelSerializer):
         fields = ("id", "unit", "type", "image", "content", "answers")
 
     def get_answers(self, obj):
-        return UnitExerciseElementAnswerSerializer(
-            obj.answers.all(), many=True
-        ).data
+        return UnitExerciseElementAnswerSerializer(obj.answers.all(), many=True).data
 
 
 class UnitUserAnswerSerializer(serializers.ModelSerializer):

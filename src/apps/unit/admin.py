@@ -1,12 +1,12 @@
 from django.contrib import admin
 
 from .models import (
+    Topic,
     Unit,
     UnitExerciseElement,
-    UnitTheoryElement,
-    Topic,
     UnitExerciseElementAnswer,
-    UnitUserAnswer
+    UnitTheoryElement,
+    UnitUserAnswer,
 )
 
 
@@ -32,9 +32,7 @@ class UnitAdmin(admin.ModelAdmin):
 
         if unit is None:
             return Unit.objects.create_unit(
-                topic=obj.topic,
-                name=obj.name,
-                desc=obj.description
+                topic=obj.topic, name=obj.name, desc=obj.description
             )
         return obj.save()
 

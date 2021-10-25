@@ -1,21 +1,17 @@
 from typing import Optional
 
+from django.contrib.auth import get_user_model
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
-from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
-from src.apps.utils.models import CommonModel
 from src.apps.user.models import UserUnitRelation
+from src.apps.utils.models import CommonModel
 
 
 class UnitManager(models.Manager):
     def create_users_unit_relation(self, unit, users):
-        data = [
-            UserUnitRelation(user=user, unit=unit)
-            for user
-            in users
-        ]
+        data = [UserUnitRelation(user=user, unit=unit) for user in users]
         return UserUnitRelation.objects.bulk_create(data)
 
     def create_unit(self, topic, name, desc):
@@ -47,15 +43,12 @@ class Topic(CommonModel):
         verbose_name=_("Название топика"),
     )
     description = models.CharField(
-        max_length=40,
-        verbose_name=_("Описание раздела"),
-        default="",
-        blank=True
+        max_length=40, verbose_name=_("Описание раздела"), default="", blank=True
     )
 
     def get_progress(self, user_id: int) -> Optional[int]:
         progress = 0
-        unit_user_relations_progress = self.units.filter(   # noqa
+        unit_user_relations_progress = self.units.filter(  # noqa
             related_users__user__id=user_id
         ).values_list("related_users__progress", flat=True)
 
@@ -84,14 +77,10 @@ class Unit(CommonModel):
         related_name="units",
     )
     name = models.CharField(
-        max_length=255,
-        verbose_name=_("Название юнита"),
-        default="Безымянный раздел"
+        max_length=255, verbose_name=_("Название юнита"), default="Безымянный раздел"
     )
     description = models.CharField(
-        max_length=100,
-        verbose_name=_("Описание юнита"),
-        default="Нет описания..."
+        max_length=100, verbose_name=_("Описание юнита"), default="Нет описания..."
     )
 
     objects = UnitManager()
@@ -117,16 +106,9 @@ class UnitTheoryElement(CommonModel):
         verbose_name=_("Тип элемента"),
     )
     content = models.CharField(
-        max_length=600,
-        verbose_name=_("Контетнт элемента"),
-        null=True,
-        blank=True
+        max_length=600, verbose_name=_("Контетнт элемента"), null=True, blank=True
     )
-    image = models.ImageField(
-        upload_to="unitassets",
-        null=True,
-        blank=True
-    )
+    image = models.ImageField(upload_to="unitassets", null=True, blank=True)
     order_number = models.IntegerField(default=0)
 
 
@@ -147,16 +129,9 @@ class UnitExerciseElement(CommonModel):
         verbose_name=_("Тип элемента"),
     )
     content = models.CharField(
-        max_length=500,
-        verbose_name=_("Контент элемента"),
-        null=True,
-        blank=True
+        max_length=500, verbose_name=_("Контент элемента"), null=True, blank=True
     )
-    image = models.ImageField(
-        upload_to="unitassets",
-        null=True,
-        blank=True
-    )
+    image = models.ImageField(upload_to="unitassets", null=True, blank=True)
     order_number = models.IntegerField(default=0)
 
     def __str__(self):
@@ -172,19 +147,20 @@ class UnitExerciseElementAnswer(CommonModel):
         to=UnitExerciseElement,
         on_delete=models.DO_NOTHING,
         verbose_name=_("Упражнение юнита"),
-        related_name="answers"
+        related_name="answers",
     )
     data = models.JSONField(
-        verbose_name=_("Варинаты ответов или правильные ответы(зависит от типа упражнения)"),
+        verbose_name=_(
+            "Варинаты ответов или правильные ответы(зависит от типа упражнения)"
+        ),
         encoder=DjangoJSONEncoder,
-        default=dict(
-            variants=["data"],
-            answers={0: 1}
-        )
+        default=dict(variants=["data"], answers={0: 1}),
     )
     is_correct = models.BooleanField(
         default=False,
-        verbose_name=_("Индикатор который указывает на правильность варинта(не для FREE_ANSWER_VIEW)")
+        verbose_name=_(
+            "Индикатор который указывает на правильность варинта(не для FREE_ANSWER_VIEW)"
+        ),
     )
 
     def __str__(self):
@@ -197,26 +173,22 @@ class UnitUserAnswer(CommonModel):
         verbose_name_plural = _("Ответы юзеров на вопросы")
 
     user = models.ForeignKey(
-        to='authentication.FIUReadUser',
+        to="authentication.FIUReadUser",
         on_delete=models.CASCADE,
         related_name="user_answers",
-        verbose_name=_("Пользователь")
+        verbose_name=_("Пользователь"),
     )
-    unit = models.ForeignKey(
-        to=Unit,
-        on_delete=models.CASCADE,
-        verbose_name=_("Юнит")
-    )
+    unit = models.ForeignKey(to=Unit, on_delete=models.CASCADE, verbose_name=_("Юнит"))
     exercise = models.ForeignKey(
         to=UnitExerciseElement,
         on_delete=models.CASCADE,
         related_name="user_answer",
-        verbose_name=_("Упражнение")
+        verbose_name=_("Упражнение"),
     )
     answer = models.ForeignKey(
         to=UnitExerciseElementAnswer,
         on_delete=models.CASCADE,
-        verbose_name=_("Ответ пользователя")
+        verbose_name=_("Ответ пользователя"),
     )
 
     def __str__(self):

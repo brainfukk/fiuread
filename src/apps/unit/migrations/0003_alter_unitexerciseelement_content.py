@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('unit', '0002_auto_20210928_0925'),
+        ("unit", "0002_auto_20210928_0925"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='unitexerciseelement',
-            name='content',
-            field=models.CharField(max_length=500, verbose_name='Контент элемента'),
+            model_name="unitexerciseelement",
+            name="content",
+            field=models.CharField(max_length=500, verbose_name="Контент элемента"),
         ),
     ]
