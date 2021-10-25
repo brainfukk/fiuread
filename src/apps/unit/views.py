@@ -1,8 +1,6 @@
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from django.utils.encoding import smart_str
-
 from src.apps.utils.viewsets import ModelViewSetMixin
 
 from .models import (
@@ -13,6 +11,7 @@ from .models import (
     UnitTheoryElement,
     UnitUserAnswer,
 )
+from src.apps.user.models import Event, UserPurse
 from .seriazliers import (
     TopicSerializer,
     UnitExerciseElementAnswerSerializer,
@@ -105,6 +104,8 @@ class UnitUserAnswerViewSet(ModelViewSetMixin):
     queryset = UnitUserAnswer.objects.all()
     serializer_class = UnitUserAnswerSerializer
     permission_classes = (IsAuthenticated,)
+    event_message = "Поздравляем! Вы закончили юнит {}"
+    event_coins_earned_message = "На ваш счет зачислено {} баллов"
 
     def get_queryset(self):
         return (
@@ -130,11 +131,11 @@ class UnitUserAnswerViewSet(ModelViewSetMixin):
         answers = request.data.get("answers")
 
         items = []
+        points = 0
         unit_obj = Unit.objects.get(id=unit_id)
 
         for key, value in answers.items():
             exercise = self.get_exercise(key)
-            print(exercise.answers.all())
             try:
                 unit = UnitUserAnswer.objects.get(
                     user__id=request.user.id,
@@ -147,6 +148,7 @@ class UnitUserAnswerViewSet(ModelViewSetMixin):
                     unit_id=unit_id,
                     exercise_id=int(key),
                 )
+                points += 1
 
             if exercise.type in ["IN_TEXT_SELECT", "FREE_IN_TEXT_ANSWER"]:
                 db_answer = exercise.answers.last().data
@@ -173,4 +175,18 @@ class UnitUserAnswerViewSet(ModelViewSetMixin):
         user_to_unit_relation.progress = progress
         user_to_unit_relation.save()
 
+        Event.objects.create(
+            user=request.user,
+            type='NOTIFICATION',
+            message=self.event_message.format(unit_obj.name)
+        )
+
+        user_purse = UserPurse.objects.get(user__id=request.user.id)
+        user_purse.points += points
+        user_purse.save()
+        Event.objects.create(
+            user=request.user,
+            type='NOTIFICATION',
+            message=self.event_coins_earned_message.format(str(points))
+        )
         return Response({"correct": "{}/{}".format(correct, questions)})
