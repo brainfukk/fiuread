@@ -6,6 +6,7 @@ from .views import (
     UnitTheoryElementViewSet,
     UnitUserAnswerViewSet,
     UnitViewSet,
+    UnitSearchViewSet
 )
 
 urlpatterns = (
@@ -30,4 +31,5 @@ urlpatterns = (
         UnitUserAnswerViewSet.as_view({"get": "list", "post": "create"}),
         name="unit-exercise-answers",
     ),
+    path("units/search/", UnitSearchViewSet.as_view({"get": "list"}))
 )

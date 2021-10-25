@@ -1,6 +1,8 @@
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
+from django.utils.encoding import smart_str
+
 from src.apps.utils.viewsets import ModelViewSetMixin
 
 from .models import (
@@ -38,6 +40,31 @@ class UnitViewSet(ModelViewSetMixin):
             .get_queryset()
             .filter(topic__id=self.request.query_params.get("topic_id"))
         )
+
+
+class UnitSearchViewSet(ModelViewSetMixin):
+    queryset = Unit.objects.all()
+    serializer_class = UnitSerializer
+
+    def list(self, request, *args, **kwargs):
+        items = []
+        units = self.get_queryset()
+        search_phrase = request.query_params.get("search_phrase", "").lower()
+
+        if not search_phrase.strip():
+            return Response([])
+
+        for unit in units:
+            if search_phrase in unit.name.lower():
+                items.append(unit)
+                continue
+
+            if search_phrase in unit.description.lower():
+                items.append(unit)
+                continue
+
+        serializer = self.get_serializer(items, many=True)
+        return Response(serializer.data)
 
 
 class UnitTheoryElementViewSet(ModelViewSetMixin):
@@ -107,29 +134,29 @@ class UnitUserAnswerViewSet(ModelViewSetMixin):
 
         for key, value in answers.items():
             exercise = self.get_exercise(key)
-
-            if exercise.type == "IN_TEXT_SELECT":
-                db_answer = exercise.answers.last()
-                db_answer.data["user"] = value
-                db_answer.save()
-            else:
-                db_answer = exercise.answers.filter(id=value).last()
-
+            print(exercise.answers.all())
             try:
                 unit = UnitUserAnswer.objects.get(
                     user__id=request.user.id,
                     unit__id=unit_id,
                     exercise_id=int(key),
                 )
-                unit.answer = db_answer
-                unit.save()
             except UnitUserAnswer.DoesNotExist:  # noqa
                 unit = UnitUserAnswer.objects.create(
                     user_id=request.user.id,
                     unit_id=unit_id,
                     exercise_id=int(key),
-                    answer=db_answer,
                 )
+
+            if exercise.type in ["IN_TEXT_SELECT", "FREE_IN_TEXT_ANSWER"]:
+                db_answer = exercise.answers.last().data
+                db_answer["user"] = value
+                unit.json_answer = db_answer
+            else:
+                db_answer = exercise.answers.filter(id=value).last()
+                unit.answer = db_answer
+
+            unit.save()
             items.append(unit)
 
         answers_mixin = AnswersMixin(items=items)

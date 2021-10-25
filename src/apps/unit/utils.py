@@ -2,11 +2,11 @@ class AnswersMixin:
     def __init__(self, items):
         self.items = items
 
-    def check_in_text_select(self, item):
+    def check_in_text_select_free_answers(self, item):
         correct = 0
         questions = 0
-        answers = item.answer.data.get("answers")
-        user_answers = item.answer.data.get("user")
+        answers = item.json_answer.get("answers")
+        user_answers = item.json_answer.get("user")
 
         if user_answers is None:
             return None, None, False
@@ -25,8 +25,8 @@ class AnswersMixin:
         question_len = 0
 
         for item in self.items:
-            if item.exercise.type == "IN_TEXT_SELECT":
-                correct_in_text, questions, status = self.check_in_text_select(
+            if item.exercise.type in ["IN_TEXT_SELECT", "FREE_IN_TEXT_ANSWER"]:
+                correct_in_text, questions, status = self.check_in_text_select_free_answers(
                     item=item
                 )
                 if not status:

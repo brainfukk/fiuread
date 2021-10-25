@@ -199,6 +199,16 @@ class UnitUserAnswer(CommonModel):
         to=UnitExerciseElementAnswer,
         on_delete=models.CASCADE,
         verbose_name=_("Ответ пользователя"),
+        null=True,
+        blank=True,
+        default=None,
+    )
+    json_answer = models.JSONField(
+        verbose_name=_("Поле ответов для IN_TEXT типов вопросов"),
+        encoder=DjangoJSONEncoder,
+        default=dict(variants=["data"], answers={0: 1}),
+        null=True,
+        blank=True,
     )
 
     def __str__(self):
