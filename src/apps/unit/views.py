@@ -62,6 +62,12 @@ class UnitSearchViewSet(ModelViewSetMixin):
                 items.append(unit)
                 continue
 
+            theory_elements = unit.theories.all()
+            for theory_element in theory_elements:
+                if search_phrase in theory_element.content.lower():
+                    items.append(unit)
+                    break
+
         serializer = self.get_serializer(items, many=True)
         return Response(serializer.data)
 
